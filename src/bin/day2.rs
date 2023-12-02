@@ -13,17 +13,15 @@ fn get_color(part: &str, color: &str) -> i32 {
 }
 
 fn max_dices(game_str: &str) -> (i32, (i32, i32, i32)) {
-    let parts = game_str.split(':').collect::<Vec<_>>();
-    assert!(parts.len() == 2);
-    assert!(parts[0].starts_with("Game "));
-    let game: i32 = parts[0]
+    let (game, values) = game_str.split_once(':').expect("invalid game");
+    let game: i32 = game
         .replace("Game ", "")
         .parse()
         .expect("Could not parse game number");
 
     (
         game,
-        parts[1].split(';').fold((0, 0, 0), |(r, g, b), draft| {
+        values.split(';').fold((0, 0, 0), |(r, g, b), draft| {
             (
                 r.max(get_color(draft, "red")),
                 g.max(get_color(draft, "green")),
@@ -36,24 +34,17 @@ fn max_dices(game_str: &str) -> (i32, (i32, i32, i32)) {
 fn run1(input: &str) -> i32 {
     input
         .lines()
-        .map(|line| {
-            let (game, (r, g, b)) = max_dices(line);
-            if r <= 12 && g <= 13 && b <= 14 {
-                game
-            } else {
-                0
-            }
-        })
+        .map(max_dices)
+        .filter(|(_game, (r, g, b))| *r <= 12 && *g <= 13 && *b <= 14)
+        .map(|(game, _values)| game)
         .sum()
 }
 
 fn run2(input: &str) -> i32 {
     input
         .lines()
-        .map(|line| {
-            let (_game, (r, g, b)) = max_dices(line);
-            r * g * b
-        })
+        .map(max_dices)
+        .map(|(_game, (r, g, b))| r * g * b)
         .sum()
 }
 
