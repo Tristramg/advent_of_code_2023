@@ -46,7 +46,7 @@ fn run2(input: &str) -> i32 {
 }
 
 fn main() {
-    let contents = std::fs::read_to_string("inputs/day4").expect("could not read input");
+    let contents = std::fs::read_to_string("inputs/day_4").expect("could not read input");
     println!("part1: {}, part2: {}", run1(&contents), run2(&contents));
 }
 
