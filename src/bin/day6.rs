@@ -11,7 +11,7 @@ x = pressing_time
 
 fn solve(time: f64, record: f64) -> u64 {
     let delta = time * time - 4.0 * record; // delta = t² - 4·d (b² - ac)
-    assert!(delta >= 0.0);
+    assert!(delta >= 0.0); // delta positive, a negative, the hyperbole is pointing up, positive between x1 and x2
     let x1 = (time - delta.sqrt()) / 2.0;
     let x2 = (time + delta.sqrt()) / 2.0;
 
