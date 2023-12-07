@@ -1,15 +1,16 @@
+// 249822760 to high
 use std::cmp::Ordering;
 
 use nom::InputIter;
 
 #[derive(PartialOrd, PartialEq, Eq, Debug, Hash)]
 enum Card {
+    J,
     Num(u32),
     T,
     Q,
     K,
     A,
-    J,
 }
 
 impl Card {
@@ -40,11 +41,11 @@ impl HandType {
     fn from(hand: &Hand) -> Self {
         use HandType::*;
         let mut hash = std::collections::HashMap::<_, usize>::new();
-        for card in hand.cards.iter() {
+        for card in hand.cards.iter().filter(|c| c != &&Card::J) {
             *hash.entry(card).or_default() += 1;
         }
 
-        let jokers = hash.get(&Card::J).unwrap_or(&0);
+        let jokers = hand.cards.iter().filter(|c| c == &&Card::J).count();
 
         let without_jokers =
             match [5, 4, 3, 2].map(|v| hash.iter().filter(|(_, val)| **val == v).count()) {
@@ -149,11 +150,14 @@ fn test_parse_line() {
 fn test_hand_type() {
     use HandType::*;
     assert_eq!(HandType::from(&Hand::from("32T3K 765")), OnePair);
-    assert_eq!(HandType::from(&Hand::from("T55J5 765")), FourOfAKind);
     assert_eq!(HandType::from(&Hand::from("KK677 765")), TwoPair);
+    assert_eq!(HandType::from(&Hand::from("T55J5 765")), FourOfAKind);
+    assert_eq!(HandType::from(&Hand::from("KTJJT 765")), FourOfAKind);
+    assert_eq!(HandType::from(&Hand::from("QQQJA 765")), FourOfAKind);
     assert!(HandType::from(&Hand::from("KK677 1")) > HandType::from(&Hand::from("32T3K 765")));
 }
 
+#[test]
 fn test_first_star() {
     let input = "32T3K 765
 T55J5 684
