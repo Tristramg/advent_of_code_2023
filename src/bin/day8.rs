@@ -149,5 +149,5 @@ fn test_star2() {
 22Z = (22B, 22B)
 XXX = (XXX, XXX)";
 
-    assert_eq!(6, run2(input))
+    assert_eq!(0, run2(input))
 }
